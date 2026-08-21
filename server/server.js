@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ObjectId } = require('mongodb');
@@ -5,13 +6,13 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = 3000;
-const JWT_SECRET = 'my-super-secret-key-change-this-later';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 app.use(express.json());
 app.use(cors());
 
 // Connect to MongoDB
-const uri = 'mongodb+srv://supriyarajiv71208_db_user:ENj8FFPGj5Y5lX9D@cluster0.k9plor5.mongodb.net/?appName=Cluster0';
+const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri);
 
 let usersCollection;
