@@ -98,7 +98,8 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   }
 
-  // BLOG DETAIL page: fetch and display one blog
+  
+    // BLOG DETAIL page: fetch and display one blog
   const blogTitle = document.querySelector('#blog-title');
 
   if (blogTitle) {
@@ -111,9 +112,54 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('#blog-title').textContent = blog.title;
         document.querySelector('#blog-content').textContent = blog.content;
         document.querySelector('#blog-date').textContent = new Date(blog.createdAt).toLocaleDateString();
+
+        // Pre-fill the edit form with current values
+        document.querySelector('#edit-title').value = blog.title;
+        document.querySelector('#edit-content').value = blog.content;
       })
       .catch(err => {
         document.querySelector('#blog-title').textContent = 'Blog not found';
       });
+
+    // Show edit form when "Edit" is clicked
+    document.querySelector('#edit-btn').addEventListener('click', function() {
+      document.querySelector('#edit-form-container').style.display = 'block';
+    });
+
+    // Handle saving the edit
+    document.querySelector('#edit-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const title = document.querySelector('#edit-title').value;
+      const content = document.querySelector('#edit-content').value;
+
+      fetch(`http://localhost:3000/api/blogs/${blogId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, content })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        location.reload(); // refresh page to show updated content
+      })
+      .catch(err => alert('Error: ' + err));
+    });
+
+    // Handle delete
+    document.querySelector('#delete-btn').addEventListener('click', function() {
+      const confirmDelete = confirm('Are you sure you want to delete this post?');
+      if (!confirmDelete) return;
+
+      fetch(`http://localhost:3000/api/blogs/${blogId}`, {
+        method: 'DELETE'
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        window.location.href = '../index.html'; // go back to home after deleting
+      })
+      .catch(err => alert('Error: ' + err));
+    });
   }
-});
+  });

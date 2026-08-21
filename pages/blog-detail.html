@@ -16,10 +16,26 @@
   </header>
 
   <main>
-    <div class="post-card">
+     <div class="post-card">
       <h2 id="blog-title">Loading...</h2>
       <p id="blog-date"></p>
       <p id="blog-content"></p>
+
+      <button id="edit-btn">Edit</button>
+      <button id="delete-btn">Delete</button>
+    </div>
+
+    <div class="form-container" id="edit-form-container" style="display: none;">
+      <h3>Edit Blog Post</h3>
+      <form id="edit-form">
+        <label for="edit-title">Title</label>
+        <input type="text" id="edit-title" required>
+
+        <label for="edit-content">Content</label>
+        <textarea id="edit-content" rows="8" required></textarea>
+
+        <button type="submit">Save Changes</button>
+      </form>
     </div>
   </main>
 

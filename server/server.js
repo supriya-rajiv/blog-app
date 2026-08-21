@@ -88,7 +88,47 @@ app.get('/api/blogs/:id', async (req, res) => {
     res.status(400).json({ message: 'Invalid blog ID.' });
   }
 });
+// UPDATE BLOG endpoint
+app.put('/api/blogs/:id', async (req, res) => {
+  const { ObjectId } = require('mongodb');
+  const { title, content } = req.body;
 
+  if (!title || !content) {
+    return res.status(400).json({ message: 'Title and content are required.' });
+  }
+
+  try {
+    const result = await blogsCollection.updateOne(
+      { _id: new ObjectId(req.params.id) },
+      { $set: { title, content } }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: 'Blog not found.' });
+    }
+
+    res.status(200).json({ message: 'Blog updated successfully!' });
+  } catch (err) {
+    res.status(400).json({ message: 'Invalid blog ID.' });
+  }
+});
+
+// DELETE BLOG endpoint
+app.delete('/api/blogs/:id', async (req, res) => {
+  const { ObjectId } = require('mongodb');
+
+  try {
+    const result = await blogsCollection.deleteOne({ _id: new ObjectId(req.params.id) });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: 'Blog not found.' });
+    }
+
+    res.status(200).json({ message: 'Blog deleted successfully!' });
+  } catch (err) {
+    res.status(400).json({ message: 'Invalid blog ID.' });
+  }
+});
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
