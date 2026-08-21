@@ -71,3 +71,49 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
 });
+// HOME page: fetch and display all blogs
+document.addEventListener('DOMContentLoaded', function() {
+  const blogList = document.querySelector('#blog-list');
+
+  if (blogList) {
+    fetch('http://localhost:3000/api/blogs')
+      .then(res => res.json())
+      .then(blogs => {
+        if (blogs.length === 0) {
+          blogList.innerHTML = '<p>No blog posts yet. Be the first to create one!</p>';
+          return;
+        }
+
+        blogList.innerHTML = blogs.map(blog => `
+          <div class="post-card">
+            <h3>${blog.title}</h3>
+            <p>${blog.content.substring(0, 100)}...</p>
+            <a href="pages/blog-detail.html?id=${blog._id}">Read more</a>
+          </div>
+        `).join('');
+      })
+      .catch(err => {
+        blogList.innerHTML = '<p>Error loading posts.</p>';
+        console.error(err);
+      });
+  }
+
+  // BLOG DETAIL page: fetch and display one blog
+  const blogTitle = document.querySelector('#blog-title');
+
+  if (blogTitle) {
+    const params = new URLSearchParams(window.location.search);
+    const blogId = params.get('id');
+
+    fetch(`http://localhost:3000/api/blogs/${blogId}`)
+      .then(res => res.json())
+      .then(blog => {
+        document.querySelector('#blog-title').textContent = blog.title;
+        document.querySelector('#blog-content').textContent = blog.content;
+        document.querySelector('#blog-date').textContent = new Date(blog.createdAt).toLocaleDateString();
+      })
+      .catch(err => {
+        document.querySelector('#blog-title').textContent = 'Blog not found';
+      });
+  }
+});
